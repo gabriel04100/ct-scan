@@ -1,0 +1,9 @@
+*.png
+*.jpg
+*.pth
+/data
+*.ckpt
+mlruns/
+*.ipynb
+.trash
+.venv
