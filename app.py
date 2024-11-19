@@ -6,6 +6,7 @@ import torch.nn as nn
 import torchvision.models as models
 from typing import Union
 
+
 # Fonction pour charger le modèle
 @st.cache_resource
 def load_model(model_path: str, num_classes: int = 4) -> nn.Module:
@@ -27,18 +28,20 @@ def load_model(model_path: str, num_classes: int = 4) -> nn.Module:
     model.eval()  # Mettre le modèle en mode évaluation
     return model
 
+
 def preprocess_image(image: Image.Image) -> torch.Tensor:
     """
-    Transforme et redimensionne une image PIL en un tenseur compatible avec PyTorch.
+    Transforme et redimensionne une image PIL en un tenseur 
+    compatible avec PyTorch.
     S'assure que l'image a 3 canaux (RGB).
     
     Args:
         image (Image.Image): L'image à transformer.
         
     Returns:
-        torch.Tensor: Tenseur représentant l'image, avec une dimension supplémentaire pour le batch.
+        torch.Tensor: Tenseur représentant l'image, avec une dimension 
+        supplémentaire pour le batch.
     """
-    # Convertir l'image en RGB si elle contient un canal alpha ou est en niveaux de gris
     if image.mode != "RGB":
         image = image.convert("RGB")
     
@@ -50,6 +53,7 @@ def preprocess_image(image: Image.Image) -> torch.Tensor:
     image_tensor = transform(image).unsqueeze(0)  # Ajouter une dimension batch
     return image_tensor
 
+
 # Liste des noms de classes
 class_names = [
     "adenocarcinoma_left.lower.lobe",
@@ -57,6 +61,7 @@ class_names = [
     "normal",
     "squamous.cell.carcinoma_left.hilum"
 ]
+
 
 def predict(model: nn.Module, image_tensor: torch.Tensor) -> str:
     """
@@ -72,7 +77,7 @@ def predict(model: nn.Module, image_tensor: torch.Tensor) -> str:
     """
     with torch.no_grad():
         outputs = model(image_tensor)
-        _, predicted = torch.max(outputs, 1)  # Obtenir la classe avec la probabilité maximale
+        _, predicted = torch.max(outputs, 1)  # Obtenir la classe
         class_idx = predicted.item()  # Obtenir l'indice de la classe
         return class_names[class_idx]  # Retourne le nom de la classe
 
@@ -81,11 +86,12 @@ def predict(model: nn.Module, image_tensor: torch.Tensor) -> str:
 st.title("Classification d'images CT-Scan")
 
 # Chargement du modèle
-model_path = "models/ct-scan-classifier.pth"  # Remplacer par le chemin réel vers votre modèle
+model_path = "models/ct-scan-classifier.pth"
 model = load_model(model_path)
 
 # Option de téléchargement d'image
-uploaded_file = st.file_uploader("Choisissez une image à classer", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choisissez une image à classer",
+                                 type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     # Afficher l'image téléchargée
